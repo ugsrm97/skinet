@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;   //Venkat Manually Added.
 using Infrastructure.Data;
+using Core.Interfaces;
 
 namespace API
 {
@@ -25,8 +26,9 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
 
+            services.AddScoped<IProductRepository,ProductRepository>();
             services.AddControllers();
-
+            
             // *GV* in Data Folder yuo have StoreContext is there. 
             services.AddDbContext<StoreContext>(
                 x => x.UseSqlite(_config.GetConnectionString("DefaultConnection")));
@@ -38,6 +40,7 @@ namespace API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        // Middleware Ordering is important.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
